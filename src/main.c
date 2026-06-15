@@ -1,9 +1,22 @@
 #include <raylib.h>
 
+#define SCREEN_WIDTH  800
+#define SCREEN_HEIGHT 600
+
+#define FROG_WIDTH  64
+#define FROG_HEIGHT 64
+
 #define FEET_OFFSET_X 22
 #define FEET_OFFSET_Y 36
 #define FEET_WIDTH    22
 #define FEET_HEIGHT    5
+
+#define WALL_WIDTH   20
+#define LEFT_WALL_X  SCREEN_WIDTH / 4
+#define RIGHT_WALL_X SCREEN_WIDTH - LEFT_WALL_X - WALL_WIDTH
+
+#define PLATFORM_WIDTH  40
+#define PLATFORM_HEIGHT 5
 
 typedef struct
 {
@@ -15,6 +28,8 @@ typedef struct
     bool isJumping;
 } Frog;
 
+void draw_walls(void);
+
 int main(void)
 {
     InitWindow(800, 600, "frog");
@@ -22,19 +37,19 @@ int main(void)
     float gravity = 300;
 
     Frog frog = {
-        .position = {100, 100},
+        .position = {SCREEN_WIDTH / 2 - FROG_WIDTH / 2, 100},
         .velocity = {0, 0},
         .texture = LoadTexture("assets/frog-idle.png"),
         .frame = {
             .x = 0,
             .y = 0,
-            .width = 64,
-            .height = 64
+            .width = FROG_WIDTH,
+            .height = FROG_HEIGHT
         },
         .isJumping = true
     };
 
-    Rectangle frogHitbox = {
+    Rectangle frogFeet = {
         frog.position.x + FEET_OFFSET_X,
         frog.position.y + FEET_OFFSET_Y,
         FEET_WIDTH,
@@ -42,10 +57,10 @@ int main(void)
     };
 
     Rectangle platform = {
-        120,
+        SCREEN_WIDTH / 2 - PLATFORM_WIDTH / 2,
         500,
-        30,
-        4
+        PLATFORM_WIDTH,
+        PLATFORM_HEIGHT
     };
 
     SetTargetFPS(60);
@@ -58,21 +73,22 @@ int main(void)
         {
             frog.velocity.y += gravity * dt;
             frog.position.y += frog.velocity.y * dt;
-            frogHitbox.y = frog.position.y + FEET_OFFSET_Y;
+            frogFeet.y = frog.position.y + FEET_OFFSET_Y;
         }
 
-        if (CheckCollisionRecs(frogHitbox, platform))
+        if (CheckCollisionRecs(frogFeet, platform))
         {
             frog.isJumping = false;
             frog.velocity.y = 0;
-            printf("collision");
+            frogFeet.y = platform.y - FEET_HEIGHT;
+            frog.position.y = frogFeet.y - FEET_OFFSET_Y;
         }
 
         BeginDrawing();
 
-        ClearBackground(DARKGRAY);
+        ClearBackground(LIGHTGRAY);
 
-        DrawRectangleRec(platform, DARKGREEN);
+        DrawRectangleRec(platform, DARKBLUE);
 
         DrawTextureRec(
             frog.texture,
@@ -82,13 +98,14 @@ int main(void)
         );
 
         DrawRectangleLines(
-            frogHitbox.x,
-            frogHitbox.y,
-            frogHitbox.width,
-            frogHitbox.height,
+            frogFeet.x,
+            frogFeet.y,
+            frogFeet.width,
+            frogFeet.height,
             RED
         );
 
+        draw_walls();
 
         EndDrawing();
     }
@@ -98,4 +115,22 @@ int main(void)
     CloseWindow();
 
     return 0;
+}
+
+void draw_walls(void) {
+    DrawRectangle(
+        LEFT_WALL_X,
+        0,
+        WALL_WIDTH,
+        SCREEN_HEIGHT,
+        DARKBLUE
+    );
+
+    DrawRectangle(
+        RIGHT_WALL_X,
+        0,
+        WALL_WIDTH,
+        SCREEN_HEIGHT,
+        DARKBLUE
+    );
 }
