@@ -61,6 +61,13 @@ int main(void)
             frogHitbox.y = frog.position.y + FEET_OFFSET_Y;
         }
 
+        if (CheckCollisionRecs(frogHitbox, platform))
+        {
+            frog.isJumping = false;
+            frog.velocity.y = 0;
+            printf("collision");
+        }
+
         BeginDrawing();
 
         ClearBackground(DARKGRAY);
