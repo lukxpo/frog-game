@@ -26,6 +26,7 @@ typedef struct
     Rectangle frame;
     Rectangle feetBox;
     bool isJumping;
+    bool isCharging;
 } Frog;
 
 void draw_walls(void);
@@ -34,7 +35,8 @@ int main(void)
 {
     InitWindow(800, 600, "frog");
 
-    float gravity = 300;
+    float gravity = 300.0;
+    float jumpPower = 0.0;
 
     Frog frog = {
         .position = {SCREEN_WIDTH / 2 - FROG_WIDTH / 2, 100},
@@ -46,7 +48,8 @@ int main(void)
             .width = FROG_WIDTH,
             .height = FROG_HEIGHT
         },
-        .isJumping = true
+        .isJumping = true,
+        .isCharging = false
     };
 
     Rectangle frogFeet = {
@@ -74,6 +77,26 @@ int main(void)
             frog.velocity.y += gravity * dt;
             frog.position.y += frog.velocity.y * dt;
             frogFeet.y = frog.position.y + FEET_OFFSET_Y;
+        }
+        else
+        {
+            if (IsKeyPressed(KEY_SPACE) && !frog.isCharging) 
+            {
+                frog.isCharging = true;
+            }
+        }
+
+        if (frog.isCharging)
+        {
+            if (IsKeyReleased(KEY_SPACE))
+            {
+                frog.isJumping = true;
+                frog.isCharging = false;
+                frog.velocity.y -= jumpPower;
+                jumpPower = 0.0;
+            }
+
+            jumpPower += 300 * dt;
         }
 
         if (CheckCollisionRecs(frogFeet, platform))
