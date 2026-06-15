@@ -24,9 +24,8 @@ typedef struct
     Vector2 velocity;
     Texture2D texture;
     Rectangle frame;
-    Rectangle feetBox;
-    bool isJumping;
-    bool isCharging;
+    bool is_jumping;
+    bool is_charging;
 } Frog;
 
 void draw_walls(void);
@@ -35,11 +34,12 @@ int main(void)
 {
     InitWindow(800, 600, "frog");
 
-    float gravity = 300.0;
-    float jumpPower = 0.0;
+    const float gravity = 300.0;
+    
+    float jump_power = 0.0;
 
     Frog frog = {
-        .position = {SCREEN_WIDTH / 2 - FROG_WIDTH / 2, 100},
+        .position = {SCREEN_WIDTH / 2 - FROG_WIDTH / 2, 300},
         .velocity = {0, 0},
         .texture = LoadTexture("assets/frog-idle.png"),
         .frame = {
@@ -48,20 +48,30 @@ int main(void)
             .width = FROG_WIDTH,
             .height = FROG_HEIGHT
         },
-        .isJumping = true,
-        .isCharging = false
+        .is_jumping = true,
+        .is_charging = false
     };
 
-    Rectangle frogFeet = {
+    Rectangle frog_feet = {
         frog.position.x + FEET_OFFSET_X,
         frog.position.y + FEET_OFFSET_Y,
         FEET_WIDTH,
         FEET_HEIGHT
     };
 
-    Rectangle platform = {
+    int platforms_size = 2;
+    Rectangle platforms[platforms_size];
+
+    platforms[0] = (Rectangle){
         SCREEN_WIDTH / 2 - PLATFORM_WIDTH / 2,
         500,
+        PLATFORM_WIDTH,
+        PLATFORM_HEIGHT
+    };
+
+    platforms[1] = (Rectangle){
+        SCREEN_WIDTH / 2 - PLATFORM_WIDTH / 2,
+        200,
         PLATFORM_WIDTH,
         PLATFORM_HEIGHT
     };
@@ -72,46 +82,52 @@ int main(void)
     {
         float dt = GetFrameTime();
 
-        if (frog.isJumping)
+        if (frog.is_jumping)
         {
             frog.velocity.y += gravity * dt;
             frog.position.y += frog.velocity.y * dt;
-            frogFeet.y = frog.position.y + FEET_OFFSET_Y;
+            frog_feet.y = frog.position.y + FEET_OFFSET_Y;
         }
         else
         {
-            if (IsKeyPressed(KEY_SPACE) && !frog.isCharging) 
+            if (IsKeyPressed(KEY_SPACE) && !frog.is_charging) 
             {
-                frog.isCharging = true;
+                frog.is_charging = true;
             }
         }
 
-        if (frog.isCharging)
+        if (frog.is_charging)
         {
             if (IsKeyReleased(KEY_SPACE))
             {
-                frog.isJumping = true;
-                frog.isCharging = false;
-                frog.velocity.y -= jumpPower;
-                jumpPower = 0.0;
+                frog.is_jumping = true;
+                frog.is_charging = false;
+                frog.velocity.y -= jump_power;
+                jump_power = 0.0;
             }
 
-            jumpPower += 300 * dt;
+            jump_power += 400 * dt;
         }
 
-        if (CheckCollisionRecs(frogFeet, platform))
+        for (int i = 0; i < platforms_size; i++)
         {
-            frog.isJumping = false;
-            frog.velocity.y = 0;
-            frogFeet.y = platform.y - FEET_HEIGHT;
-            frog.position.y = frogFeet.y - FEET_OFFSET_Y;
+            if (CheckCollisionRecs(frog_feet, platforms[i]) && frog.velocity.y > 0)
+            {
+                frog.is_jumping = false;
+                frog.velocity.y = 0;
+                frog_feet.y = platforms[i].y - FEET_HEIGHT;
+                frog.position.y = frog_feet.y - FEET_OFFSET_Y;
+            }
         }
 
         BeginDrawing();
 
-        ClearBackground(LIGHTGRAY);
+        ClearBackground(RAYWHITE);
 
-        DrawRectangleRec(platform, DARKBLUE);
+        for (int i = 0; i < platforms_size; i++)
+        {
+            DrawRectangleRec(platforms[i], DARKGRAY);
+        }
 
         DrawTextureRec(
             frog.texture,
@@ -121,10 +137,10 @@ int main(void)
         );
 
         DrawRectangleLines(
-            frogFeet.x,
-            frogFeet.y,
-            frogFeet.width,
-            frogFeet.height,
+            frog_feet.x,
+            frog_feet.y,
+            frog_feet.width,
+            frog_feet.height,
             RED
         );
 
@@ -146,7 +162,7 @@ void draw_walls(void) {
         0,
         WALL_WIDTH,
         SCREEN_HEIGHT,
-        DARKBLUE
+        GRAY
     );
 
     DrawRectangle(
@@ -154,6 +170,6 @@ void draw_walls(void) {
         0,
         WALL_WIDTH,
         SCREEN_HEIGHT,
-        DARKBLUE
+        GRAY
     );
 }
