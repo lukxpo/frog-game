@@ -11,12 +11,19 @@
 #define FEET_WIDTH    22
 #define FEET_HEIGHT    5
 
+#define AIM_THICKNESS 1
+#define AIM_SIZE      20
+#define AIM_ANGLE_CAP 90.0f
+
 #define WALL_WIDTH   20
 #define LEFT_WALL_X  SCREEN_WIDTH / 4
 #define RIGHT_WALL_X SCREEN_WIDTH - LEFT_WALL_X - WALL_WIDTH
 
-#define PLATFORM_WIDTH  40
+#define PLATFORM_WIDTH  50
 #define PLATFORM_HEIGHT 5
+
+#define JUMP_POWER_CAP 300.0f
+#define GRAVITY 200.0f
 
 typedef struct
 {
@@ -24,6 +31,7 @@ typedef struct
     Vector2 velocity;
     Texture2D texture;
     Rectangle frame;
+    Rectangle feet;
     bool is_jumping;
     bool is_charging;
 } Frog;
@@ -33,10 +41,10 @@ void draw_walls(void);
 int main(void)
 {
     InitWindow(800, 600, "frog");
-
-    const float gravity = 300.0;
     
-    float jump_power = 0.0;
+    float jump_power = 0.0f;
+    float aim_angle = 0.0f;
+    float aim_speed = 180.0f;
 
     Frog frog = {
         .position = {SCREEN_WIDTH / 2 - FROG_WIDTH / 2, 300},
@@ -48,15 +56,14 @@ int main(void)
             .width = FROG_WIDTH,
             .height = FROG_HEIGHT
         },
+        .feet = {
+            frog.position.x + FEET_OFFSET_X,
+            frog.position.y + FEET_OFFSET_Y,
+            FEET_WIDTH,
+            FEET_HEIGHT
+        },
         .is_jumping = true,
         .is_charging = false
-    };
-
-    Rectangle frog_feet = {
-        frog.position.x + FEET_OFFSET_X,
-        frog.position.y + FEET_OFFSET_Y,
-        FEET_WIDTH,
-        FEET_HEIGHT
     };
 
     int platforms_size = 2;
@@ -84,9 +91,13 @@ int main(void)
 
         if (frog.is_jumping)
         {
-            frog.velocity.y += gravity * dt;
+            frog.velocity.y += GRAVITY * dt;
+
+            frog.position.x += frog.velocity.x * dt;
             frog.position.y += frog.velocity.y * dt;
-            frog_feet.y = frog.position.y + FEET_OFFSET_Y;
+
+            frog.feet.x = frog.position.x + FEET_OFFSET_X;
+            frog.feet.y = frog.position.y + FEET_OFFSET_Y;
         }
         else
         {
@@ -100,28 +111,79 @@ int main(void)
         {
             if (IsKeyReleased(KEY_SPACE))
             {
+                float radians = aim_angle * DEG2RAD;
+
                 frog.is_jumping = true;
                 frog.is_charging = false;
-                frog.velocity.y -= jump_power;
-                jump_power = 0.0;
+                frog.velocity.x = sinf(radians) * jump_power;
+                frog.velocity.y = -cosf(radians) * jump_power;
+                jump_power = 0.0f;
             }
 
             jump_power += 400 * dt;
+            if (jump_power > JUMP_POWER_CAP)
+            {
+                jump_power = JUMP_POWER_CAP;
+            }
         }
 
         for (int i = 0; i < platforms_size; i++)
         {
-            if (CheckCollisionRecs(frog_feet, platforms[i]) && frog.velocity.y > 0)
+            if (CheckCollisionRecs(frog.feet, platforms[i]) && frog.velocity.y > 0)
             {
                 frog.is_jumping = false;
                 frog.velocity.y = 0;
-                frog_feet.y = platforms[i].y - FEET_HEIGHT;
-                frog.position.y = frog_feet.y - FEET_OFFSET_Y;
+                frog.feet.y = platforms[i].y - FEET_HEIGHT;
+                frog.position.y = frog.feet.y - FEET_OFFSET_Y;
             }
         }
 
+        if (frog.feet.x < LEFT_WALL_X + WALL_WIDTH) 
+        {
+            frog.feet.x = LEFT_WALL_X + WALL_WIDTH;
+            frog.velocity.x *= -1;
+        };
+
+        if (frog.feet.x + frog.feet.width > RIGHT_WALL_X) 
+        {
+            frog.feet.x = RIGHT_WALL_X - frog.feet.width;
+            frog.velocity.x *= -1;
+        };
+
+        if (IsKeyDown(KEY_LEFT))
+        {
+            aim_angle -= aim_speed * dt;
+        }
+
+        if (IsKeyDown(KEY_RIGHT))
+        {
+            aim_angle += aim_speed * dt;
+        }
+
+        if (aim_angle < -AIM_ANGLE_CAP)
+        {   
+            aim_angle = -AIM_ANGLE_CAP;
+        }
+
+        if (aim_angle > AIM_ANGLE_CAP)
+        {
+            aim_angle = AIM_ANGLE_CAP;
+        }
+
+        Vector2 start = {
+            frog.position.x + FROG_WIDTH / 2,
+            frog.position.y + FROG_HEIGHT / 2
+        };
+
+        Vector2 end = {
+            start.x + sinf(aim_angle * DEG2RAD) * AIM_SIZE,
+            start.y - cosf(aim_angle * DEG2RAD) * AIM_SIZE
+        };
+
         BeginDrawing();
 
+        DrawFPS(10, 10);
+        
         ClearBackground(RAYWHITE);
 
         for (int i = 0; i < platforms_size; i++)
@@ -136,11 +198,18 @@ int main(void)
             WHITE
         );
 
+        DrawLineEx(
+            start,
+            end,
+            AIM_THICKNESS,
+            RED
+        );
+
         DrawRectangleLines(
-            frog_feet.x,
-            frog_feet.y,
-            frog_feet.width,
-            frog_feet.height,
+            frog.feet.x,
+            frog.feet.y,
+            frog.feet.width,
+            frog.feet.height,
             RED
         );
 
@@ -148,6 +217,8 @@ int main(void)
 
         EndDrawing();
     }
+
+    printf("Exited game loop\n");
 
     UnloadTexture(frog.texture);
 
