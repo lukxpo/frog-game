@@ -1,23 +1,7 @@
 #pragma once
 
 #include <raylib.h>
-
-#define FROG_WIDTH  64
-#define FROG_HEIGHT 64
-
-#define FEET_OFFSET_X 22
-#define FEET_OFFSET_Y 36
-#define FEET_WIDTH    22
-#define FEET_HEIGHT    5
-
-#define JUMP_POWER_CAP 400.0f
-
-#define GRAVITY 200.0f
-
-#define IDLE       0
-#define CHARGING   1
-#define GOING_UP   2
-#define GOING_DOWN 3
+#include "config.h"
 
 typedef struct
 {
@@ -34,6 +18,7 @@ typedef struct
     float jump_power;
     bool is_jumping;
     bool is_charging;
+    bool is_flipped;
 } Frog;
 
 Frog create_frog(Vector2 spawn_pos);

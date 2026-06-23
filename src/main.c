@@ -1,19 +1,6 @@
 #include <raylib.h>
 #include "frog.h"
-
-#define SCREEN_WIDTH  720
-#define SCREEN_HEIGHT 720
-
-#define WALL_WIDTH   10
-#define LEFT_WALL_X  SCREEN_WIDTH / 5
-#define RIGHT_WALL_X SCREEN_WIDTH - LEFT_WALL_X - WALL_WIDTH
-
-#define PLATFORM_WIDTH  50
-#define PLATFORM_HEIGHT 5
-
-#define AIM_THICKNESS 1
-#define AIM_SIZE      20
-#define AIM_ANGLE_CAP 90.0f
+#include "config.h"
 
 void draw_walls(void);
 void update_aim(Frog *frog, float dt);

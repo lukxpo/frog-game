@@ -1,0 +1,30 @@
+#define SCREEN_WIDTH  720
+#define SCREEN_HEIGHT 720
+
+#define WALL_WIDTH   10
+#define LEFT_WALL_X  SCREEN_WIDTH / 5
+#define RIGHT_WALL_X SCREEN_WIDTH - LEFT_WALL_X - WALL_WIDTH
+
+#define PLATFORM_WIDTH  50
+#define PLATFORM_HEIGHT 5
+
+#define AIM_THICKNESS 1
+#define AIM_SIZE      20
+#define AIM_ANGLE_CAP 90.0f
+
+#define FROG_WIDTH  64
+#define FROG_HEIGHT 64
+
+#define FEET_OFFSET_X 22
+#define FEET_OFFSET_Y 36
+#define FEET_WIDTH    22
+#define FEET_HEIGHT    5
+
+#define JUMP_POWER_CAP 400.0f
+
+#define GRAVITY 200.0f
+
+#define IDLE       0
+#define CHARGING   1
+#define GOING_UP   2
+#define GOING_DOWN 3

@@ -20,7 +20,8 @@ Frog create_frog(Vector2 spawn_pos)
         .aim_speed = 180.0f,
         .jump_power = 0.0f,
         .is_jumping = true,
-        .is_charging = false
+        .is_charging = false,
+        .is_flipped = false
     };
 
     return frog;
@@ -77,23 +78,38 @@ void update_frog(Frog *frog, float dt)
             frog->jump_power = JUMP_POWER_CAP;
         }
     }
+
+    // flip
+    if (frog->velocity.x > 0) 
+    {
+        frog->is_flipped = true;
+    }
+    if (frog->velocity.x < 0)
+    {
+        frog->is_flipped = false;
+    }
 }
 
 
 void draw_frog(const Frog *frog) 
-{
+{   
     Rectangle source_rect = {
-        frog->current_frame * frog->frame_width,
+        frog->current_frame * FROG_WIDTH,
         0,
         frog->frame_width,
         frog->frame_height
     };
 
+    if (frog->is_flipped)
+    {
+        source_rect.width = -FROG_WIDTH;
+    }
+
     Rectangle dest_rect = {
         frog->position.x,
         frog->position.y,
-        frog->frame_width,
-        frog->frame_height
+        FROG_WIDTH,
+        FROG_HEIGHT
     };
 
     DrawTexturePro(
