@@ -6,16 +6,10 @@ Frog create_frog(Vector2 spawn_pos)
     Frog frog = {
         .position = spawn_pos,
         .velocity = {0, 0},
-        .texture = LoadTexture("assets/frog-idle.png"),
-        .frame_width = 64,
-        .frame_height = 64,
+        .texture = LoadTexture("assets/frog-poses.png"),
+        .frame_width = FROG_WIDTH,
+        .frame_height = FROG_HEIGHT,
         .current_frame = 0,
-        .frame = {
-            .x = 0,
-            .y = 0,
-            .width = FROG_WIDTH,
-            .height = FROG_HEIGHT
-        },
         .feet = {
             spawn_pos.x + FEET_OFFSET_X,
             spawn_pos.y + FEET_OFFSET_Y,
@@ -45,6 +39,11 @@ void update_frog(Frog *frog, float dt)
 
         frog->feet.x = frog->position.x + FEET_OFFSET_X;
         frog->feet.y = frog->position.y + FEET_OFFSET_Y;
+
+        if (frog->velocity.y > 0)
+        {
+            frog->current_frame = GOING_DOWN;
+        }
     }
 
     // ----------------------------- charge -----------------------------
@@ -53,6 +52,7 @@ void update_frog(Frog *frog, float dt)
         if (IsKeyPressed(KEY_SPACE) && !frog->is_charging) 
         {
             frog->is_charging = true;
+            frog->current_frame = CHARGING;
         }
     }
 
@@ -68,6 +68,7 @@ void update_frog(Frog *frog, float dt)
             frog->velocity.x = sinf(radians) * frog->jump_power;
             frog->velocity.y = -cosf(radians) * frog->jump_power;
             frog->jump_power = 0.0f;
+            frog->current_frame = GOING_UP;
         }
 
         frog->jump_power += 400 * dt;
@@ -78,13 +79,30 @@ void update_frog(Frog *frog, float dt)
     }
 }
 
+
 void draw_frog(const Frog *frog) 
 {
-    // ----------------------------- draw frog -----------------------------
-    DrawTextureRec(
+    Rectangle source_rect = {
+        frog->current_frame * frog->frame_width,
+        0,
+        frog->frame_width,
+        frog->frame_height
+    };
+
+    Rectangle dest_rect = {
+        frog->position.x,
+        frog->position.y,
+        frog->frame_width,
+        frog->frame_height
+    };
+
+    DrawTexturePro(
         frog->texture,
-        frog->frame,
-        frog->position,
+        source_rect,
+        dest_rect,
+        (Vector2){0, 0},
+        0.0f,
         WHITE
     );
 }
+

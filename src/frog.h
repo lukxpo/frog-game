@@ -11,7 +11,13 @@
 #define FEET_HEIGHT    5
 
 #define JUMP_POWER_CAP 400.0f
+
 #define GRAVITY 200.0f
+
+#define IDLE       0
+#define CHARGING   1
+#define GOING_UP   2
+#define GOING_DOWN 3
 
 typedef struct
 {

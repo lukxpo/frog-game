@@ -58,6 +58,7 @@ int main(void)
                 frog.velocity.y = 0;
                 frog.feet.y = platforms[i].y - FEET_HEIGHT;
                 frog.position.y = frog.feet.y - FEET_OFFSET_Y;
+                frog.current_frame = IDLE;
             }
         }
 
