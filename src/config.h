@@ -1,3 +1,5 @@
+#pragma once
+
 #define SCREEN_WIDTH  720
 #define SCREEN_HEIGHT 720
 
@@ -7,6 +9,7 @@
 
 #define PLATFORM_WIDTH  50
 #define PLATFORM_HEIGHT 5
+#define PLATFORMS_SIZE  2
 
 #define AIM_THICKNESS 1
 #define AIM_SIZE      20

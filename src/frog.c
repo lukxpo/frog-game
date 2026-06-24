@@ -1,7 +1,7 @@
 #include "frog.h"
 
 
-Frog create_frog(Vector2 spawn_pos)
+Frog load_frog(Vector2 spawn_pos)
 {
     Frog frog = {
         .position = spawn_pos,
@@ -120,5 +120,58 @@ void draw_frog(const Frog *frog)
         0.0f,
         WHITE
     );
+
+    // feet only for debug
+    DrawRectangleLines(
+        frog->feet.x,
+        frog->feet.y,
+        frog->feet.width,
+        frog->feet.height,
+        RED
+    );
 }
 
+
+// ------------------------------------------- AIM STUFF ---------------------------------------
+void update_aim(Frog *frog, float dt)
+{
+    if (IsKeyDown(KEY_LEFT))
+    {
+        frog->aim_angle -= frog->aim_speed * dt;
+    }
+
+    if (IsKeyDown(KEY_RIGHT))
+    {
+        frog->aim_angle += frog->aim_speed * dt;
+    }
+
+    if (frog->aim_angle < -AIM_ANGLE_CAP)
+    {   
+        frog->aim_angle = -AIM_ANGLE_CAP;
+    }
+
+    if (frog->aim_angle > AIM_ANGLE_CAP)
+    {
+        frog->aim_angle = AIM_ANGLE_CAP;
+    }
+}
+
+void draw_aim(Frog *frog)
+{
+    Vector2 start = {
+        frog->position.x + FROG_WIDTH / 2,
+        frog->position.y + FROG_HEIGHT / 2
+    };
+
+    Vector2 end = {
+        start.x + sinf(frog->aim_angle * DEG2RAD) * AIM_SIZE,
+        start.y - cosf(frog->aim_angle * DEG2RAD) * AIM_SIZE
+    };
+
+    DrawLineEx(
+        start,
+        end,
+        AIM_THICKNESS,
+        RED
+    );
+}

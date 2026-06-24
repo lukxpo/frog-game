@@ -21,6 +21,8 @@ typedef struct
     bool is_flipped;
 } Frog;
 
-Frog create_frog(Vector2 spawn_pos);
+Frog load_frog(Vector2 spawn_pos);
 void update_frog(Frog *frog, float dt);
 void draw_frog(const Frog *frog);
+void update_aim(Frog *frog, float dt);
+void draw_aim(Frog *frog);
