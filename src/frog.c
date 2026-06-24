@@ -21,7 +21,10 @@ Frog load_frog(Vector2 spawn_pos)
         .jump_power = 0.0f,
         .is_jumping = true,
         .is_charging = false,
-        .is_flipped = false
+        .is_flipped = false,
+        .current_platform = 0,
+        .jump_sound = LoadSound("assets/jump.wav"),
+        .wall_hit_sound = LoadSound("assets/wallhit.wav")
     };
 
     return frog;
@@ -70,6 +73,7 @@ void update_frog(Frog *frog, float dt)
             frog->velocity.y = -cosf(radians) * frog->jump_power;
             frog->jump_power = 0.0f;
             frog->current_frame = GOING_UP;
+            PlaySound(frog->jump_sound);
         }
 
         frog->jump_power += 400 * dt;

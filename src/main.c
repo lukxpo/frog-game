@@ -8,6 +8,8 @@ int main(void)
 {
     InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "frog");
 
+    InitAudioDevice();
+
     Vector2 spawn_position = {SCREEN_WIDTH / 2 - FROG_WIDTH / 2, 300};
     Frog frog = load_frog(spawn_position);
 
@@ -40,6 +42,9 @@ int main(void)
     }
 
     UnloadTexture(frog.texture);
+    UnloadSound(frog.jump_sound);
+    UnloadSound(frog.wall_hit_sound);
+    CloseAudioDevice();
 
     CloseWindow();
 
