@@ -17,6 +17,13 @@ int main(void)
     load_initial_platforms(platforms);
     int current_platform = 0;
 
+    Camera2D camera = { 0 };
+
+    camera.target.y = 0;
+    camera.offset = (Vector2){ 0 , 0 };
+    camera.rotation = 0.0f;
+    camera.zoom = 1.0f;
+
     SetTargetFPS(60);
 
     while (!WindowShouldClose())
@@ -28,8 +35,9 @@ int main(void)
 
         update_frog(&frog, dt);
         update_aim(&frog, dt);
-
+        
         BeginDrawing();
+        BeginMode2D(camera);
         
         ClearBackground(RAYWHITE);
 
@@ -38,6 +46,7 @@ int main(void)
         draw_aim(&frog);
         draw_walls();
 
+        EndMode2D();
         EndDrawing();
     }
 

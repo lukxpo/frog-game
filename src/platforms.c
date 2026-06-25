@@ -1,21 +1,30 @@
-#include <stdio.h>
 #include "platforms.h"
 
 void load_initial_platforms(Rectangle platforms[])
 {
-    platforms[0] = (Rectangle){
-        SCREEN_WIDTH / 2 - PLATFORM_WIDTH / 2,
-        600,
-        PLATFORM_WIDTH,
-        PLATFORM_HEIGHT
-    };
+    int x_pos = 0;
+    int y_pos = 0;
 
-    platforms[1] = (Rectangle){
-        SCREEN_WIDTH / 2 - PLATFORM_WIDTH / 2,
-        300,
-        PLATFORM_WIDTH,
-        PLATFORM_HEIGHT
-    }; 
+    for (int i = 0; i < PLATFORMS_SIZE; i++)
+    {
+        if (i == 0)
+        {
+            x_pos = SCREEN_WIDTH / 2 - PLATFORM_WIDTH / 2;
+            y_pos = SCREEN_HEIGHT - 50;
+        }
+        else
+        {
+            x_pos = GetRandomValue(PLATFORM_MIN_X, PLATFORM_MAX_X);
+            y_pos -= GetRandomValue(160, 320);
+        }
+
+        platforms[i] = (Rectangle){
+            x_pos,
+            y_pos,
+            PLATFORM_WIDTH,
+            PLATFORM_HEIGHT
+        };
+    }
 }
 
 void draw_platforms(Rectangle platforms[])
@@ -45,4 +54,7 @@ void check_platforms_collision(Frog *frog, Rectangle platforms[])
     }
 }
 
-//Rectangle create_platform(void) 
+Rectangle create_platform(void)
+{
+
+}
