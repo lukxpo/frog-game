@@ -76,7 +76,7 @@ void update_frog(Frog *frog, float dt)
             PlaySound(frog->jump_sound);
         }
 
-        frog->jump_power += 400 * dt;
+        frog->jump_power += JUMP_POWER_SPEED * dt;
         if (frog->jump_power > JUMP_POWER_CAP)
         {
             frog->jump_power = JUMP_POWER_CAP;
@@ -126,6 +126,7 @@ void draw_frog(const Frog *frog)
     );
 
     // feet only for debug
+    /*
     DrawRectangleLines(
         frog->feet.x,
         frog->feet.y,
@@ -133,6 +134,7 @@ void draw_frog(const Frog *frog)
         frog->feet.height,
         RED
     );
+    */
 }
 
 
@@ -161,21 +163,24 @@ void update_aim(Frog *frog, float dt)
 }
 
 void draw_aim(Frog *frog)
-{
-    Vector2 start = {
+{   
+    if (!frog->is_jumping)
+    {
+        Vector2 start = {
         frog->position.x + FROG_WIDTH / 2,
         frog->position.y + FROG_HEIGHT / 2
-    };
+        };
 
-    Vector2 end = {
-        start.x + sinf(frog->aim_angle * DEG2RAD) * AIM_SIZE,
-        start.y - cosf(frog->aim_angle * DEG2RAD) * AIM_SIZE
-    };
+        Vector2 end = {
+            start.x + sinf(frog->aim_angle * DEG2RAD) * AIM_SIZE,
+            start.y - cosf(frog->aim_angle * DEG2RAD) * AIM_SIZE
+        };
 
-    DrawLineEx(
-        start,
-        end,
-        AIM_THICKNESS,
-        RED
-    );
+        DrawLineEx(
+            start,
+            end,
+            AIM_THICKNESS,
+            RED
+        );
+    }
 }

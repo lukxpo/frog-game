@@ -13,16 +13,7 @@ int main(void)
     Vector2 spawn_position = {SCREEN_WIDTH / 2 - FROG_WIDTH / 2, 300};
     Frog frog = load_frog(spawn_position);
 
-    Rectangle platforms[PLATFORMS_SIZE];
-    load_initial_platforms(platforms);
-    int current_platform = 0;
-
-    Camera2D camera = { 0 };
-
-    camera.target.y = 0;
-    camera.offset = (Vector2){ 0 , 0 };
-    camera.rotation = 0.0f;
-    camera.zoom = 1.0f;
+    PlatformManager platform_manager = load_platform_manager();
 
     SetTargetFPS(60);
 
@@ -30,23 +21,22 @@ int main(void)
     {
         float dt = GetFrameTime();
 
-        check_platforms_collision(&frog, platforms);
+        check_platforms_collision(&frog, platform_manager.platforms);
         check_walls_collision(&frog);
 
         update_frog(&frog, dt);
         update_aim(&frog, dt);
+        update_platforms(&platform_manager);
         
         BeginDrawing();
-        BeginMode2D(camera);
         
         ClearBackground(RAYWHITE);
 
-        draw_platforms(platforms);
+        draw_platforms(platform_manager.platforms);
         draw_frog(&frog);
         draw_aim(&frog);
         draw_walls();
 
-        EndMode2D();
         EndDrawing();
     }
 

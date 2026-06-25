@@ -1,7 +1,9 @@
 #include "platforms.h"
 
-void load_initial_platforms(Rectangle platforms[])
+PlatformManager load_platform_manager(void)
 {
+    PlatformManager platform_manager;
+
     int x_pos = 0;
     int y_pos = 0;
 
@@ -18,13 +20,17 @@ void load_initial_platforms(Rectangle platforms[])
             y_pos -= GetRandomValue(160, 320);
         }
 
-        platforms[i] = (Rectangle){
+        platform_manager.platforms[i] = (Rectangle){
             x_pos,
             y_pos,
             PLATFORM_WIDTH,
             PLATFORM_HEIGHT
         };
     }
+
+    platform_manager.last_platform_y = y_pos;
+
+    return platform_manager;
 }
 
 void draw_platforms(Rectangle platforms[])
@@ -54,7 +60,19 @@ void check_platforms_collision(Frog *frog, Rectangle platforms[])
     }
 }
 
-Rectangle create_platform(void)
+void update_platforms(PlatformManager *platform_manager)
 {
-
+    for (int i = 0; i < PLATFORMS_SIZE; i++)
+    {
+        if (platform_manager->platforms[i].y >= SCREEN_HEIGHT)
+        {
+            platform_manager->last_platform_y += GetRandomValue(160, 320);
+            platform_manager->platforms[i] = (Rectangle){
+                GetRandomValue(PLATFORM_MIN_X, PLATFORM_MAX_X),
+                platform_manager->last_platform_y,
+                PLATFORM_WIDTH,
+                PLATFORM_HEIGHT
+            };
+        }
+    }
 }
