@@ -34,7 +34,7 @@ PlatformManager load_platform_manager(void)
     return platform_manager;
 }
 
-void draw_platforms(Rectangle platforms[])
+void draw_platforms(const Rectangle platforms[])
 {
     for (int i = 0; i < PLATFORMS_SIZE; i++)
     {

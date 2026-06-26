@@ -13,6 +13,6 @@ typedef struct
 
 
 PlatformManager load_platform_manager(void);
-void draw_platforms(Rectangle platforms[]);
+void draw_platforms(const Rectangle platforms[]);
 void check_platforms_collision(Frog *frog, Rectangle platforms[], ScoreManager *score_manager);
 void update_platforms(PlatformManager *platform_manager);

@@ -1,18 +1,18 @@
 #include "frog.h"
 
 
-Frog load_frog(Vector2 spawn_pos)
+Frog load_frog(void)
 {
     Frog frog = {
-        .position = spawn_pos,
+        .position = (Vector2){SPAWN_POSITION_X, SPAWN_POSITION_Y},
         .velocity = {0, 0},
         .texture = LoadTexture("assets/frog-poses.png"),
         .frame_width = FROG_WIDTH,
         .frame_height = FROG_HEIGHT,
         .current_frame = 0,
         .feet = {
-            spawn_pos.x + FEET_OFFSET_X,
-            spawn_pos.y + FEET_OFFSET_Y,
+            SPAWN_POSITION_X + FEET_OFFSET_X,
+            SPAWN_POSITION_Y + FEET_OFFSET_Y,
             FEET_WIDTH,
             FEET_HEIGHT
         },
@@ -25,12 +25,21 @@ Frog load_frog(Vector2 spawn_pos)
         .current_platform = 0,
         .jump_sound = LoadSound("assets/jump.wav"),
         .wall_hit_sound = LoadSound("assets/wallhit.wav"),
+        .die_sound = LoadSound("assets/die.wav"),
         .wall_hits = 0,
-        .max_lives = 1,
-        .current_lives = 1
+        .max_lives = FROG_MAX_LIVES,
+        .current_lives = FROG_MAX_LIVES
     };
 
     return frog;
+}
+
+void unload_frog(Frog *frog)
+{
+    UnloadTexture(frog->texture);
+    UnloadSound(frog->jump_sound);
+    UnloadSound(frog->wall_hit_sound);
+    UnloadSound(frog->die_sound);
 }
 
 
@@ -100,6 +109,7 @@ void update_frog(Frog *frog, float dt)
     if (frog->position.y > SCREEN_HEIGHT)
     {
         frog->current_lives -= 1;
+        PlaySound(frog->die_sound);
     }
 }
 
@@ -174,7 +184,7 @@ void update_aim(Frog *frog, float dt)
     }
 }
 
-void draw_aim(Frog *frog)
+void draw_aim(const Frog *frog)
 {   
     if (!frog->is_jumping)
     {

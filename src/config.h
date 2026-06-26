@@ -19,8 +19,12 @@
 #define AIM_SIZE      14
 #define AIM_ANGLE_CAP 90.0f
 
-#define FROG_WIDTH  64
-#define FROG_HEIGHT 64
+#define FROG_WIDTH    64
+#define FROG_HEIGHT   64
+#define FROG_MAX_LIVES 1
+
+#define SPAWN_POSITION_X SCREEN_WIDTH / 2 - FROG_WIDTH / 2
+#define SPAWN_POSITION_Y 500
 
 #define FEET_OFFSET_X 22
 #define FEET_OFFSET_Y 36
@@ -36,6 +40,9 @@
 #define GOING_UP   2
 #define GOING_DOWN 3
 
-#define SCORE_X    20
-#define SCORE_Y    20
-#define SCORE_SIZE 20
+#define SCORE_X    30
+#define SCORE_Y    30
+#define SCORE_SIZE 26
+
+#define GAME_OVER_TEXT_SIZE  50
+#define PLAY_AGAIN_TEXT_SIZE 20

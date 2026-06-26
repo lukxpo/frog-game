@@ -11,4 +11,5 @@ typedef struct
 } ScoreManager;
 
 ScoreManager load_score_manager(void);
-void draw_score(int score);
+void unload_score_manager(ScoreManager *score_manager);
+void draw_score(const int score);

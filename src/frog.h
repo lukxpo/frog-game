@@ -22,13 +22,15 @@ typedef struct
     int current_platform;
     Sound jump_sound;
     Sound wall_hit_sound;
+    Sound die_sound;
     int wall_hits;
     int max_lives;
     int current_lives;
 } Frog;
 
-Frog load_frog(Vector2 spawn_pos);
+Frog load_frog(void);
+void unload_frog(Frog *frog);
 void update_frog(Frog *frog, float dt);
 void draw_frog(const Frog *frog);
 void update_aim(Frog *frog, float dt);
-void draw_aim(Frog *frog);
+void draw_aim(const Frog *frog);

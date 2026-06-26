@@ -4,6 +4,9 @@
 #include "platforms.h"
 #include "score.h"
 
+void reset_game(Frog *frog, PlatformManager *platform_manager, ScoreManager *score_manager);
+void draw_game_over(void);
+
 
 int main(void)
 {
@@ -11,11 +14,8 @@ int main(void)
 
     InitAudioDevice();
 
-    Vector2 spawn_position = {SCREEN_WIDTH / 2 - FROG_WIDTH / 2, 500};
-    Frog frog = load_frog(spawn_position);
-
+    Frog frog = load_frog();
     PlatformManager platform_manager = load_platform_manager();
-
     ScoreManager score_manager = load_score_manager();
 
     SetTargetFPS(60);
@@ -48,33 +48,64 @@ int main(void)
         }
         // gameover
         else
-        {      
+        {   
+            if (IsKeyPressed(KEY_SPACE))
+            {
+                reset_game(&frog, &platform_manager, &score_manager);
+            }
+
             BeginDrawing();
         
             ClearBackground(RAYWHITE);
 
-            char *game_over_text = "GAME OVER";
-            int text_width = MeasureText(game_over_text, 50);
-
-            DrawText(
-                TextFormat(game_over_text),
-                SCREEN_WIDTH / 2 - text_width / 2,
-                SCREEN_HEIGHT / 3,
-                50,
-                DARKGREEN
-            );
+            draw_game_over();
 
             EndDrawing(); 
         }
     }
 
-    UnloadTexture(frog.texture);
-    UnloadSound(frog.jump_sound);
-    UnloadSound(frog.wall_hit_sound);
-    UnloadSound(score_manager.score_sound);
+    unload_frog(&frog);
+    unload_score_manager(&score_manager);
+
     CloseAudioDevice();
 
     CloseWindow();
 
     return 0;
+}
+
+
+void reset_game(Frog *frog, PlatformManager *platform_manager, ScoreManager *score_manager)
+{
+    unload_frog(frog);
+    *frog = load_frog();
+
+    *platform_manager = load_platform_manager();
+
+    unload_score_manager(score_manager);
+    *score_manager = load_score_manager();
+}
+
+void draw_game_over(void)
+{
+    char *game_over_text = "GAME OVER";
+    int text_width = MeasureText(game_over_text, GAME_OVER_TEXT_SIZE);
+
+    DrawText(
+        TextFormat(game_over_text),
+        SCREEN_WIDTH / 2 - text_width / 2,
+        SCREEN_HEIGHT / 3,
+        GAME_OVER_TEXT_SIZE,
+        DARKGREEN
+    );
+    
+    char *play_again_text = "PRESS SPACE";
+    text_width = MeasureText(play_again_text, PLAY_AGAIN_TEXT_SIZE);
+    DrawText(
+        TextFormat(play_again_text),
+        SCREEN_WIDTH / 2 - text_width / 2,
+        SCREEN_HEIGHT / 2,
+        PLAY_AGAIN_TEXT_SIZE,
+        DARKGRAY
+    );
 }

@@ -11,6 +11,11 @@ ScoreManager load_score_manager(void)
     return score_manager;
 }
 
+void unload_score_manager(ScoreManager *score_manager)
+{
+    UnloadSound(score_manager->score_sound);
+}
+
 void draw_score(int score)
 {
     DrawText(
