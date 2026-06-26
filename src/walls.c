@@ -7,6 +7,7 @@ void check_walls_collision(Frog *frog)
         frog->feet.x = LEFT_WALL_X + WALL_WIDTH;
         frog->velocity.x *= -1;
         PlaySound(frog->wall_hit_sound);
+        frog->wall_hits += 1;
     };
 
     if (frog->feet.x + frog->feet.width > RIGHT_WALL_X)
@@ -14,6 +15,7 @@ void check_walls_collision(Frog *frog)
         frog->feet.x = RIGHT_WALL_X - frog->feet.width;
         frog->velocity.x *= -1;
         PlaySound(frog->wall_hit_sound);
+        frog->wall_hits += 1;
     };
 }
 

@@ -19,10 +19,12 @@ typedef struct
     bool is_jumping;
     bool is_charging;
     bool is_flipped;
-    int previous_platform;
     int current_platform;
     Sound jump_sound;
     Sound wall_hit_sound;
+    int wall_hits;
+    int max_lives;
+    int current_lives;
 } Frog;
 
 Frog load_frog(Vector2 spawn_pos);

@@ -24,7 +24,10 @@ Frog load_frog(Vector2 spawn_pos)
         .is_flipped = false,
         .current_platform = 0,
         .jump_sound = LoadSound("assets/jump.wav"),
-        .wall_hit_sound = LoadSound("assets/wallhit.wav")
+        .wall_hit_sound = LoadSound("assets/wallhit.wav"),
+        .wall_hits = 0,
+        .max_lives = 1,
+        .current_lives = 1
     };
 
     return frog;
@@ -92,6 +95,12 @@ void update_frog(Frog *frog, float dt)
     {
         frog->is_flipped = false;
     }
+
+    // die
+    if (frog->position.y > SCREEN_HEIGHT)
+    {
+        frog->current_lives -= 1;
+    }
 }
 
 
@@ -141,24 +150,27 @@ void draw_frog(const Frog *frog)
 // ------------------------------------------- AIM STUFF ---------------------------------------
 void update_aim(Frog *frog, float dt)
 {
-    if (IsKeyDown(KEY_LEFT))
+    if (!frog->is_jumping)
     {
-        frog->aim_angle -= frog->aim_speed * dt;
-    }
+        if (IsKeyDown(KEY_LEFT))
+        {
+            frog->aim_angle -= frog->aim_speed * dt;
+        }
 
-    if (IsKeyDown(KEY_RIGHT))
-    {
-        frog->aim_angle += frog->aim_speed * dt;
-    }
+        if (IsKeyDown(KEY_RIGHT))
+        {
+            frog->aim_angle += frog->aim_speed * dt;
+        }
 
-    if (frog->aim_angle < -AIM_ANGLE_CAP)
-    {   
-        frog->aim_angle = -AIM_ANGLE_CAP;
-    }
+        if (frog->aim_angle < -AIM_ANGLE_CAP)
+        {   
+            frog->aim_angle = -AIM_ANGLE_CAP;
+        }
 
-    if (frog->aim_angle > AIM_ANGLE_CAP)
-    {
-        frog->aim_angle = AIM_ANGLE_CAP;
+        if (frog->aim_angle > AIM_ANGLE_CAP)
+        {
+            frog->aim_angle = AIM_ANGLE_CAP;
+        }
     }
 }
 
@@ -167,8 +179,8 @@ void draw_aim(Frog *frog)
     if (!frog->is_jumping)
     {
         Vector2 start = {
-        frog->position.x + FROG_WIDTH / 2,
-        frog->position.y + FROG_HEIGHT / 2
+            frog->position.x + FROG_WIDTH / 2,
+            frog->position.y + FROG_HEIGHT / 2
         };
 
         Vector2 end = {
@@ -180,7 +192,7 @@ void draw_aim(Frog *frog)
             start,
             end,
             AIM_THICKNESS,
-            RED
+            DARKGREEN
         );
     }
 }

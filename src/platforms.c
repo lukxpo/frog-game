@@ -1,4 +1,5 @@
 #include "platforms.h"
+#include "stdio.h"
 
 PlatformManager load_platform_manager(void)
 {
@@ -17,7 +18,7 @@ PlatformManager load_platform_manager(void)
         else
         {
             x_pos = GetRandomValue(PLATFORM_MIN_X, PLATFORM_MAX_X);
-            y_pos -= GetRandomValue(160, 320);
+            y_pos -= GetRandomValue(PLATFORM_MIN_Y_INCREMENT, PLATFORM_MAX_Y_INCREMENT);
         }
 
         platform_manager.platforms[i] = (Rectangle){
@@ -28,7 +29,7 @@ PlatformManager load_platform_manager(void)
         };
     }
 
-    platform_manager.last_platform_y = y_pos;
+    platform_manager.last_platform = PLATFORMS_SIZE - 1;
 
     return platform_manager;
 }
@@ -41,7 +42,7 @@ void draw_platforms(Rectangle platforms[])
     }
 }
 
-void check_platforms_collision(Frog *frog, Rectangle platforms[])
+void check_platforms_collision(Frog *frog, Rectangle platforms[], ScoreManager *score_manager)
 {
     for (int i = 0; i < PLATFORMS_SIZE; i++)
     {
@@ -53,11 +54,27 @@ void check_platforms_collision(Frog *frog, Rectangle platforms[])
             frog->position.y = frog->feet.y - FEET_OFFSET_Y;
             frog->current_frame = IDLE;
             if (i != frog->current_platform)
-            {
-                printf("land\n");
+            {   
+                score_manager->scored = true;
+                score_manager->score += pow(2, frog->wall_hits);
+                PlaySound(score_manager->score_sound);
+
+                int delta_y = platforms[i].y - platforms[frog->current_platform].y;
+                frog->current_platform = i;
+                frog->position.y -= delta_y;
+                for (int j = 0; j < PLATFORMS_SIZE; j++)
+                {
+                    platforms[j].y -= delta_y;
+                }
+
+                return true;
             }
+
+            frog->wall_hits = 0;
         }
     }
+
+    return false;
 }
 
 void update_platforms(PlatformManager *platform_manager)
@@ -65,14 +82,14 @@ void update_platforms(PlatformManager *platform_manager)
     for (int i = 0; i < PLATFORMS_SIZE; i++)
     {
         if (platform_manager->platforms[i].y >= SCREEN_HEIGHT)
-        {
-            platform_manager->last_platform_y += GetRandomValue(160, 320);
+        {   
             platform_manager->platforms[i] = (Rectangle){
                 GetRandomValue(PLATFORM_MIN_X, PLATFORM_MAX_X),
-                platform_manager->last_platform_y,
+                platform_manager->platforms[platform_manager->last_platform].y - GetRandomValue(PLATFORM_MIN_Y_INCREMENT, PLATFORM_MAX_Y_INCREMENT),
                 PLATFORM_WIDTH,
                 PLATFORM_HEIGHT
             };
+            platform_manager->last_platform = i;
         }
     }
 }
