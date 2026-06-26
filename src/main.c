@@ -2,6 +2,7 @@
 #include "config.h"
 #include "frog.h"
 #include "platforms.h"
+#include "walls.h"
 #include "score.h"
 
 void reset_game(Frog *frog, PlatformManager *platform_manager, ScoreManager *score_manager);

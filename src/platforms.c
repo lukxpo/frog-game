@@ -66,15 +66,11 @@ void check_platforms_collision(Frog *frog, Rectangle platforms[], ScoreManager *
                 {
                     platforms[j].y -= delta_y;
                 }
-
-                return true;
             }
 
             frog->wall_hits = 0;
         }
     }
-
-    return false;
 }
 
 void update_platforms(PlatformManager *platform_manager)
