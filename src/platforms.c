@@ -54,18 +54,26 @@ void check_platforms_collision(Frog *frog, Rectangle platforms[], ScoreManager *
             frog->position.y = frog->feet.y - FEET_OFFSET_Y;
             frog->current_frame = IDLE;
             if (i != frog->current_platform)
-            {   
+            { 
+                int delta_y = platforms[i].y - platforms[frog->current_platform].y;
+
                 score_manager->scored = true;
-                score_manager->score += pow(2, frog->wall_hits);
+                score_manager->score_to_add = -delta_y;
+                score_manager->score -= delta_y;
+
+                // old way of calculating score
+                // score_manager->score += pow(2, frog->wall_hits);
                 PlaySound(score_manager->score_sound);
 
-                int delta_y = platforms[i].y - platforms[frog->current_platform].y;
                 frog->current_platform = i;
                 frog->position.y -= delta_y;
                 for (int j = 0; j < PLATFORMS_SIZE; j++)
                 {
                     platforms[j].y -= delta_y;
                 }
+
+                score_manager->score_to_add_position.x = frog->position.x + frog->frame_width / 3;
+                score_manager->score_to_add_position.y = frog->position.y + frog->frame_height / 3;
             }
 
             frog->wall_hits = 0;

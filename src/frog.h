@@ -27,6 +27,7 @@ typedef struct
     int wall_hits;
     int max_lives;
     int current_lives;
+    Vector2 return_position;
 } Frog;
 
 Frog load_frog(void);
@@ -35,3 +36,4 @@ void update_frog(Frog *frog, float dt);
 void draw_frog(const Frog *frog);
 void update_aim(Frog *frog, float dt);
 void draw_aim(const Frog *frog);
+void draw_lives(const int lives);

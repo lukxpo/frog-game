@@ -17,7 +17,7 @@ Frog load_frog(void)
             FEET_HEIGHT
         },
         .aim_angle = 0.0f,
-        .aim_speed = 180.0f,
+        .aim_speed = AIM_SPEED,
         .jump_power = 0.0f,
         .is_jumping = true,
         .is_charging = false,
@@ -28,7 +28,8 @@ Frog load_frog(void)
         .die_sound = LoadSound("assets/die.wav"),
         .wall_hits = 0,
         .max_lives = FROG_MAX_LIVES,
-        .current_lives = FROG_MAX_LIVES
+        .current_lives = FROG_MAX_LIVES,
+        .return_position = (Vector2) {0, 0}
     };
 
     return frog;
@@ -77,6 +78,8 @@ void update_frog(Frog *frog, float dt)
     {
         if (IsKeyReleased(KEY_SPACE))
         {
+            frog->return_position = frog->position;
+
             float radians = frog->aim_angle * DEG2RAD;
 
             frog->is_jumping = true;
@@ -106,8 +109,9 @@ void update_frog(Frog *frog, float dt)
     }
 
     // die
-    if (frog->position.y > SCREEN_HEIGHT)
+    if (frog->position.y > SCREEN_HEIGHT + 10)
     {
+        frog->position = frog->return_position;
         frog->current_lives -= 1;
         PlaySound(frog->die_sound);
     }
@@ -205,4 +209,24 @@ void draw_aim(const Frog *frog)
             DARKGREEN
         );
     }
+}
+
+void draw_lives(const int lives)
+{   
+    Color color = DARKGREEN;
+    if (lives == 2)
+    {
+        color = ORANGE;
+    }
+    else if (lives == 1)
+    {
+        color = RED;
+    }
+    DrawText(
+        TextFormat("Lives: %d", lives),
+        600,
+        SCORE_Y,
+        SCORE_SIZE,
+        color
+    );
 }

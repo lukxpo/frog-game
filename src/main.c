@@ -6,7 +6,7 @@
 #include "score.h"
 
 void reset_game(Frog *frog, PlatformManager *platform_manager, ScoreManager *score_manager);
-void draw_game_over(void);
+void draw_game_over(const int score);
 
 
 int main(void)
@@ -34,6 +34,7 @@ int main(void)
             update_frog(&frog, dt);
             update_aim(&frog, dt);
             update_platforms(&platform_manager);
+            update_score(&score_manager, frog.position, dt);
             
             BeginDrawing();
             
@@ -43,7 +44,8 @@ int main(void)
             draw_frog(&frog);
             draw_aim(&frog);
             draw_walls();
-            draw_score(score_manager.score);
+            draw_score(&score_manager);
+            draw_lives(frog.current_lives);
 
             EndDrawing();
         }
@@ -59,7 +61,7 @@ int main(void)
         
             ClearBackground(RAYWHITE);
 
-            draw_game_over();
+            draw_game_over(score_manager.score);
 
             EndDrawing(); 
         }
@@ -87,7 +89,7 @@ void reset_game(Frog *frog, PlatformManager *platform_manager, ScoreManager *sco
     *score_manager = load_score_manager();
 }
 
-void draw_game_over(void)
+void draw_game_over(const int score)
 {
     char *game_over_text = "GAME OVER";
     int text_width = MeasureText(game_over_text, GAME_OVER_TEXT_SIZE);
@@ -99,8 +101,18 @@ void draw_game_over(void)
         GAME_OVER_TEXT_SIZE,
         DARKGREEN
     );
+
+    const char *ascended_text = TextFormat("Frog Ascended %dm", score);
+    text_width = MeasureText(ascended_text, PLAY_AGAIN_TEXT_SIZE);
+    DrawText(
+        TextFormat(ascended_text),
+        SCREEN_WIDTH / 2 - text_width / 2,
+        SCREEN_HEIGHT / 2.3,
+        PLAY_AGAIN_TEXT_SIZE,
+        ORANGE
+    );
     
-    char *play_again_text = "PRESS SPACE";
+    const char *play_again_text = "PRESS SPACE";
     text_width = MeasureText(play_again_text, PLAY_AGAIN_TEXT_SIZE);
     DrawText(
         TextFormat(play_again_text),
