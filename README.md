@@ -2,7 +2,8 @@
 
 ## Play Online
 
-The game can be played directly in the browser through itch.io, without requiring any installation.
+The game can be played directly in the browser through itch.io, without requiring any installation:
+https://lukxpo.itch.io/frog-game
 
 #### Video Demo: <URL HERE>
 
