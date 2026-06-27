@@ -1,8 +1,12 @@
 # Frog Game
 
+## Play Online
+
+The game can be played directly in the browser through itch.io, without requiring any installation.
+
 #### Video Demo: <URL HERE>
 
-## Description
+#### Description
 
 Frog Game is my final project for Harvard's CS50x. It is a 2D platformer developed in C using the Raylib graphics library. Rather than recreating a traditional platformer, I wanted to build a game around a single mechanic: charging jumps. The player controls a frog that can charge its jump by holding the space bar, with the jump force increasing the longer the key is held. Mastering the timing and strength of each jump is the core challenge of the game.
 
@@ -13,6 +17,8 @@ One aspect I wanted to focus on was making the gameplay feel satisfying. Wheneve
 From a technical perspective, one of the biggest challenges was procedural platform generation. Instead of constantly creating and destroying platforms, platforms that move below the screen are recycled. When recycled, each platform is repositioned above the highest existing platform with a randomized spacing, creating the illusion of an infinite level while keeping memory usage constant.
 
 Another challenge was organizing the project itself. Early in development, almost all of the code lived inside `main.c`, which quickly became difficult to maintain as new features were added. I performed several large refactors throughout development, gradually moving responsibilities into separate modules such as player logic, platform management, wall handling and configuration. This resulted in a much cleaner architecture that makes adding new mechanics significantly easier.
+
+One additional challenge was bringing the project to the web. Since the game was originally developed as a native C application using Raylib, creating a browser version required learning how to compile the project with Emscripten and adapting the build process to WebAssembly. Although this did not require major changes to the game logic itself, understanding the toolchain and configuring the project correctly was a valuable learning experience. The result is a playable browser version that can be accessed without requiring users to download or install the game.
 
 ## File Structure
 
